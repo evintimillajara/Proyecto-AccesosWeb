@@ -1,0 +1,83 @@
+<html>
+  <head>
+  <script type ="text/javascript" src="d3.js"> </script>
+  </head>
+
+  <style>
+      .line{
+    	fill:none;
+    	stroke: steelblue;
+    	stroke-width:2px; 	
+    }
+  </style>
+
+<body>
+    
+	<script type="text/javascript">
+	//variables
+	// Establecer los margenes del gráfico
+		var margin={top:20,bottom:20,left:30,rigth:50},
+		    width=960-margin.left-margin.rigth,
+		    height=500-margin.top-margin.bottom;
+
+         // Establecer rangos
+         var x=d3.scaleLinear().range([0,width]);
+         var y=d3.scaleLinear().range([height,0]);
+
+         // Definir los valores que se graficará
+         //valores de las lineas
+         var valueline=d3.line()
+         .x(function(d){return x(d.c1);})
+         .y(function(d){return y(d.c2);});
+
+
+          // svg permite agregar formas o elementos graficos al body para poder graficar
+         var container=d3.select("body")
+              .append("svg")
+              .attr("width",width+margin.left+margin.rigth)
+              .attr("height",height+margin.top+margin.bottom)
+
+          // elemento de tipo g se agrega en el svg  
+             .append("g")     
+             .attr("transform","translate("+margin.left+","+margin.top+")");
+
+          // cargar los datos, si hay erro notifica
+             d3.csv("data.csv",function(error,data){
+                if (error) throw error;
+                
+                //bucle para leer cada dato
+                data.forEach(function(d){
+                    d.c1=d.c1
+                    d.c2=d.c2 
+
+                })
+              
+            // Determina el dominio de x y de y 
+            // Los maximos valores encontrados
+
+            x.domain([0,d3.max(data,function(d){return d.c1;}) ]);
+            y.domain([0,d3.max(data,function(d){return d.c2;}) ]);  
+
+            // Agregar el grafico al container
+            container.append("path")
+               .data([data])
+               .attr("class","line")
+               .attr("d",valueline);
+
+            
+            // agregar los ejes 
+            //translate recibe coordenadas
+
+            container.append("g")
+                .attr("transform","translate(0,"+height+")")
+                .call(d3.axisBottom(x));
+
+            container.append("g")
+                  .call(d3.axisLeft(y));
+
+          });  
+
+	</script>
+</body>
+
+</html>
